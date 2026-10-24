@@ -1,0 +1,5 @@
+case,k_W_mK,blt_mm,retained_pct,tmax_C
+reference_full,21,0.25,100,93.344
+reference_retained,21,0.25,88.22,93.653
+high_k_retained,30,0.25,88.22,88.295
+thin_high_k_retained,30,0.10,88.22,80.650
