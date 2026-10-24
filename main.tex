@@ -36,7 +36,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{\scriptsize EPTC 2026 | TIM1 co-design}
-\fancyhead[R]{\scriptsize V0--V6A evidence freeze: 23 October 2026}
+\fancyhead[R]{\scriptsize Representative 700-W FCBGA | thermal--mechanical analysis}
 \fancyfoot[C]{\scriptsize \thepage}
 \renewcommand{\headrulewidth}{0.25pt}
 \setlength{\headheight}{13pt}
@@ -77,13 +77,34 @@ The characterization of compliant TIM mechanical properties is itself challengin
 recent studies emphasize coverage degradation and package-warpage-driven interface effects
 \citep{du2026,yenigun2026}.
 The question is how these properties and \emph{where} contact is retained jointly shape thermal and mechanical behavior.
-Our completed chain includes (i) baseline verification and TIM-family screening, (ii) coverage and topology sensitivity,
-(iii) a nine-case carbon thermal DOE, (iv) recovered nonideal-contact verification, and (v) a \emph{matched}
-nine-case thermomechanical DOE. Thermal void studies and fully bonded mechanics are distinct scenarios:
-we do not solve progressive delamination, fatigue or pressure-dependent contact feedback.
+The study follows a decision-oriented workflow: first establish a verified thermal reference, then examine how
+contact area and contact \emph{location} affect heat removal, then compare conductivity and thickness
+systematically, and finally evaluate the resulting structural response. The experimental variables are
+through-plane conductivity, installed BLT, and idealized contact geometry. Mechanical sensitivity is evaluated
+through several assumed \emph{effective} modulus/thermal-expansion combinations; these are not
+measured material formulations. Thermal void studies and fully bonded mechanics are distinct scenarios:
+we do not simulate progressive delamination, fatigue or pressure-dependent contact feedback.
 
-\section{Package model, provenance and verification}
-\subsection{Constructed package and parameter traceability}
+The engineering contribution is a \emph{bounded comparison} that separates literature evidence,
+simulation outputs and unverified material/assembly assumptions. This distinction matters because
+a visually attractive low-temperature solution is not necessarily feasible as a compressed TIM layer.
+Similarly, reduced global lid warpage does not guarantee lower local interfacial stress
+\citep{subramanian2019,yenigun2026}.
+
+
+\subsection{Decision variables and what constitutes a credible comparison}
+A thermal-only screening exercise favors lower modeled peak die temperature. A package-level choice must
+add mechanically relevant measures, here the volume-averaged TIM1 von Mises stress and equivalent elastic strain,
+alongside lid-top warpage. These metrics are kept separate: a lower warpage result does not imply a lower
+average TIM stress, and neither directly yields a fatigue life. For fair conductivity--thickness comparisons,
+the same 700-W heat map, cooler boundary, TIM2 and package surroundings are retained.
+For mechanical comparisons, the same representative property model is used at each thermal DOE point,
+so an apparent conductivity effect is not confounded by switching modulus assumptions.
+This design-of-experiments approach is supported by the broader TIM literature but the numerical cases
+and their outputs belong to this study, not to the cited authors \citep{prasher2006,subramanian2019}.
+
+\section{Package representation and numerical methodology}
+\subsection{Geometry, hotspot distribution and source traceability}
 Figure~\ref{fig:model} illustrates the modeled heat path and prescribed 4$\times$4 hotspot distribution.
 This is a \emph{representative test vehicle}, not an H100 floorplan or measured proprietary GPU.
 The 16 tiles sum to $4(84)+8(42)+4(7)=700$\,W. Literature motivates the packaging form,
@@ -148,7 +169,7 @@ Carbon mechanics & $E=0.5/1/1.5$\,MPa; CTE $=250/180/100$\,ppm/K & Hypothetical 
 \end{table}
 \FloatBarrier
 
-\subsection{Solver coupling, metrics and verification}
+\subsection{Steady-state thermal model and mechanical handoff}
 Steady-state thermal fields were obtained with Ansys AEDT/Icepak 2026 R1 under a fixed 25\,\textdegree C
 cold-plate top boundary; cooling-fluid flow was not resolved.
 MAPDL Classic quarter-symmetry SOLID186 mechanical analyses received \emph{reduced} thermal fields
@@ -164,17 +185,41 @@ For area $A=(28.5\,\mathrm{mm})^2$ we distinguish the bulk TIM metric and a mode
 $\Reff$ is a \emph{peak-die-to-fixed-boundary} metric, not measured JEDEC $\theta_{JC}$
 and not an intrinsic material property.
 
-The locked V1 grease medium-to-fine mesh change was 0.256\% in peak temperature and 0.339\% in $\Reff$;
-fresh carbon reference builds reproduced the baseline within 0.004\,\textdegree C.
-The V4B $k=21$, 0.25-mm control matched the V1 carbon reference within 0.000031\,\textdegree C.
-A \emph{separate} 45-W V0.5/X23 diagnostic fit an assumed package target of
-0.200\,\textdegree C/W from a modeled 0.14457\,\textdegree C/W by using a package-level
-8.65\,\textdegree C\,mm$^2$/W penalty. This was not experimentally measured intrinsic TIM
-contact resistance and was \emph{not transferred} to V1--V6. Ideal-interface absolute
-temperatures can thus be optimistic relative to assembled contact conditions.
+Mesh refinement of the grease reference changed peak temperature by 0.256\% and $\Reff$ by 0.339\%;
+an independently rebuilt carbon reference agreed within 0.004\,\textdegree C.
+The $k=21$\,W/(m\,K), 0.25-mm control in the conductivity--BLT study
+reproduced the reference to within 0.000031\,\textdegree C.
+These are numerical consistency tests, not experimental calibration.
 
-\section{Material-family screening and interface integrity}
-\subsection{Locked V1 thermal reference cases}
+An \emph{independent 45-W thermal-resistance diagnostic} fitted a study-selected
+0.200\,\textdegree C/W package target from a modeled 0.14457\,\textdegree C/W
+using an effective 8.65\,\textdegree C\,mm$^2$/W package-level penalty.
+The fitted term was neither measured intrinsic TIM contact resistance nor applied
+to the later 700-W simulations. The full-contact results are therefore best interpreted
+as ideal-interface comparisons, not as unconditional predictions of actual assembled packages. Contact
+resistance depends on roughness, pressure and interface temperature \citep{zhao2019}.
+
+
+\subsection{Physical basis of the thermal comparison}
+For a nominally uniform layer, the through-plane bulk resistance varies as BLT divided by
+conductivity and area, as expressed in Eq.~\eqref{eq:resistance}. A real mounted interface has additional
+thermal contact terms that may depend on pressure and surface condition:
+\begin{equation}
+R_{\mathrm{TIM1,installed}}\approx R_{\mathrm{contact,die}}+
+\frac{\BLT}{\kperp A_{\mathrm{effective}}}
++R_{\mathrm{contact,lid}}.
+\label{eq:contact}
+\end{equation}
+Equation~\eqref{eq:contact} is a useful physical interpretation rather than an additional fitted law
+or a constitutive model solved in this project \citep{prasher2006,zhao2019,li2023}.
+If contact is missing preferentially beneath a hotspot, the relevant \emph{spatial} heat path changes;
+the total retained fraction by itself does not determine the peak die temperature.
+A one-dimensional resistance term also does not capture lateral spreading through
+the die and lid. Therefore, the modeled $\Reff$ is used for comparison of \emph{whole-package}
+thermal responses rather than being identified with TIM1 bulk or interfacial resistance.
+
+\section{Thermal interface material selection and contact loss}
+\subsection{Grease, carbon-fiber and indium reference comparison}
 \begin{table}[htbp]\centering
 \caption{Material-family references at 700\,W with ideally retained TIM1 area; BLTs also differ.}
 \label{tab:materials}
@@ -194,7 +239,7 @@ An assumed compliant-grease mechanics case ($E=0.05$\,MPa) produced 0.00105\,MPa
 post-yield service prediction; assumed 1.00/2.14\,MPa-yield bilinear cases instead gave about
 0.51/0.49\% mean plastic strain. Single-load simulations cannot rank fatigue life.
 
-\subsection{Coverage and topology effects (V3A/V3B)}
+\subsection{Influence of retained contact area and its spatial distribution}
 \citet{yi2025} measured carbon-pad retained coverage of 88.22\% after packaging
 and 64.82\% after subsequent preconditioning/reliability exposure.
 We apply these \emph{area fractions}, not their measured acoustic-microscopy shapes,
@@ -205,28 +250,73 @@ a centered 88.22\% footprint 93.653\,\textdegree C,
 and a centered 64.82\% footprint 109.758\,\textdegree C.
 
 \begin{table}[htbp]\centering
-\caption{V3B: three \emph{assumed} spatial loss patterns at the same 64.82\% retained TIM area.}
+\caption{Three \emph{assumed} spatial loss patterns at the same 64.82\% retained TIM area. Tile indices start at one.}
 \label{tab:topology}
 \small
 \begin{tabular}{@{}lrrl@{}}\toprule
-Loss pattern & $\Tmax$ [\textdegree C] & $\Reff$ [\textdegree C/W] & Hottest tile\\\midrule
-Peripheral ring loss & 109.758 & 0.121083 & DIE\_1\_0\\
-One missing edge band & 417.839 & 0.561198 & DIE\_0\_1\\
-Central square void & 400.546 & 0.536495 & DIE\_2\_2\\\bottomrule
+Loss pattern & $\Tmax$ [\textdegree C] & $\Reff$ [\textdegree C/W] & Hottest tile (row,col)\\\midrule
+Peripheral ring loss & 109.758 & 0.121083 & (2,1)\\
+One missing edge band & 417.839 & 0.561198 & (1,2)\\
+Central square void & 400.546 & 0.536495 & (3,3)\\\bottomrule
 \end{tabular}
 \end{table}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[x=0.85cm,y=0.85cm]
+% Full square denotes die footprint. Dark region is retained TIM1, light region is missing TIM1.
+\begin{scope}[shift={(0,0)}]
+ \fill[steel!18] (0,0) rectangle (2.4,2.4);
+ \fill[midblue!72] (0.232,0.232) rectangle (2.168,2.168);
+ \draw[ink,thick] (0,0) rectangle (2.4,2.4);
+ \node[font=\footnotesize,align=center] at (1.2,-0.42) {Peripheral\\loss};
+\end{scope}
+\begin{scope}[shift={(3.5,0)}]
+ \fill[steel!18] (0,0) rectangle (2.4,2.4);
+ \fill[midblue!72] (0,0) rectangle (1.556,2.4);
+ \draw[ink,thick] (0,0) rectangle (2.4,2.4);
+ \node[font=\footnotesize,align=center] at (1.2,-0.42) {Edge-band\\loss};
+\end{scope}
+\begin{scope}[shift={(7,0)}]
+ \fill[midblue!72] (0,0) rectangle (2.4,2.4);
+ \fill[steel!18] (0.488,0.488) rectangle (1.912,1.912);
+ \draw[ink,thick] (0,0) rectangle (2.4,2.4);
+ \node[font=\footnotesize,align=center] at (1.2,-0.42) {Central\\void};
+\end{scope}
+\node[anchor=west,font=\footnotesize,text=steel] at (10.0,1.75) {Retained TIM};
+\fill[midblue!72] (10.0,1.15) rectangle (10.32,1.47);
+\node[anchor=west,font=\footnotesize,text=steel] at (10.43,1.29) {Retained};
+\fill[steel!18,draw=ink!45] (10.0,0.56) rectangle (10.32,0.88);
+\node[anchor=west,font=\footnotesize,text=steel] at (10.43,0.70) {Missing};
+\end{tikzpicture}
+\caption{Illustrative \emph{assumed} contact-loss topologies at approximately the same
+64.82\% retained area. The dark regions depict remaining TIM1, not measured acoustic images;
+the drawings clarify topology rather than claiming exact simulated meshing.}
+\label{fig:topology}
+\end{figure}
+\FloatBarrier
+
 At equal retained area, the \emph{location} of remaining conductive paths matters greatly.
 The 400\,\textdegree C-class outputs are severe model-specific conductive-blockage scenarios:
 they are not measured aging temperatures, operating thresholds, or physically validated predictions.
 These patterns lack independent topology-specific mesh and experiment-based verification
 and neglect calibrated air-gap and pressure-dependent transport.
 
-\section{Carbon thermal design space: V4B and V4C}
-\subsection{Nine independent clean-interface thermal solutions (V4B)}
+These differences should not be misread as a prediction that all packages with 64.82\% contact
+will reach similarly high temperatures. The model applies idealized severe blockage at selected places;
+an actual interfacial gap may still transmit heat through trapped gas, residual material, or partial contact.
+The comparison instead demonstrates a limitation of an \emph{area-only} TIM specification:
+two interfaces with equal percent coverage need not have equal peak thermal resistance.
+Published reports of packaging-induced area loss \citep{yi2025} and coupled warpage/interface behavior
+\citep{du2026,yenigun2026} motivate measuring where contact is retained, not just how much.
+
+
+\section{Conductivity and bond-line thickness design study}
+\subsection{Nine-case full-contact thermal design of experiments}
 The factorial DOE varies $\kperp=\{15,21,30\}$\,W/(m\,K)
 and $\BLT=\{0.10,0.25,0.40\}$\,mm while fixing the remaining study conditions.
 \begin{table}[htbp]\centering
-\caption{V4B: solved peak die temperature [\textdegree C], 100\% nominal contact.}
+\caption{Solved peak die temperatures [\textdegree C] for the nine full-contact conductivity--thickness combinations.}
 \label{tab:v4b}
 \small
 \begin{tabular}{@{}lrrr@{}}\toprule
@@ -252,7 +342,7 @@ label style={font=\small}]
 \addlegendentry{$k=30$}
 \end{axis}
 \end{tikzpicture}
-\caption{V4B discrete thermal DOE. Connecting lines aid comparison; the results do not establish continuous global optimality.}
+\caption{Discrete conductivity--thickness thermal response. Lines connect sampled cases; continuous global optimality is not established.}
 \label{fig:thermal}
 \end{figure}
 \FloatBarrier
@@ -262,9 +352,23 @@ The lowest \emph{sampled} clean temperature is 80.455\,\textdegree C,
 $\Reff=0.079221$\,\textdegree C/W, at $k=30$ and 100\,$\mu$m;
 this is a targeted, not experimentally qualified, material and assembly state.
 
-\subsection{Recovered four-case retained-footprint shortlist (V4C)}
+
+\subsection{Interpreting the conductivity--thickness trend}
+The DOE distinguishes two decisions that are often conflated. At a \emph{fixed} conductivity,
+a reduction in installed BLT shortens the bulk conduction path. At a \emph{fixed} thickness,
+increasing through-plane conductivity has a similar direction of thermal benefit, but not
+necessarily the same quantitative leverage. Their combined effect must still be evaluated
+with the nonuniform heat source and package conduction paths.
+The $k=30$\,W/(m\,K), 100-$\mu$m configuration is thus a \emph{modeled target}; it should
+not be described as an off-the-shelf carbon material that was physically fabricated or
+thermally tested. Research on aligned carbon-fiber networks supports the feasibility of
+high conductivity and tunable compliance as \emph{material concepts}, but does not
+validate the modulus, compressed thickness or adhesion assumed here
+\citep{li2023,yi2025,subramanian2019}.
+
+\subsection{Independent confirmation under partial contact retention}
 \begin{table}[htbp]\centering
-\caption{Complete V4C thermal shortlist. The failed initial thin/high-$k$ solve was later recovered without parameter changes.}
+\caption{Four independently checked thermal configurations at full or 88.22\% retained TIM1 contact area.}
 \label{tab:v4c}
 \small
 \begin{tabular}{@{}lrrrr@{}}\toprule
@@ -275,53 +379,74 @@ High-$k$ retained & 30 & 0.25 & 88.22\% & 88.295\\
 Thin/high-$k$ retained & 30 & 0.10 & 88.22\% & \textbf{80.650}\\\bottomrule
 \end{tabular}
 \end{table}
-The authoritative source is \texttt{V4C\_recovered\_4case\_summary.csv},
-not an obsolete incomplete export.
+An initially interrupted thin/high-conductivity solver run was recovered without changing
+the model inputs. Only the subsequently completed four-case result set is used here.
 The last case has $\Reff=0.0794998$\,\textdegree C/W.
 Relative to the full-coverage $k=21$, 250-$\mu$m reference it is 12.694\,\textdegree C cooler;
 because $k$, BLT and contact conditions differ, this is not a single-variable causal effect.
 
-\section{Mechanical brackets (V4D) and matched V6A DOE}
-\subsection{V4D sensitivity and convergence boundary}
-The V4D study paired two \emph{different thermal} designs:
+\section{Thermomechanical sensitivity and matched comparison}
+\subsection{Effective material-property sensitivity and mesh verification}
+An initial structural sensitivity comparison paired two \emph{different thermal} designs:
 $k=21$\,W/(m\,K), BLT 250\,$\mu$m and $k=30$\,W/(m\,K), BLT 100\,$\mu$m.
-Carbon effective-property brackets were SOFT ($E=0.5$\,MPa, CTE=250\,ppm/K),
-MID ($E=1.0$\,MPa, CTE=180\,ppm/K), and STIFF ($E=1.5$\,MPa, CTE=100\,ppm/K),
+Three hypothetical effective-property combinations were used: low modulus ($E=0.5$\,MPa,
+CTE=250\,ppm/K), reference modulus ($E=1.0$\,MPa, CTE=180\,ppm/K),
+and higher modulus ($E=1.5$\,MPa, CTE=100\,ppm/K),
 with $\nu=0.49$ in all cases. $E$ and CTE change \emph{together}; these are not separately
 identified properties nor measured constitutive fits.
 
 \begin{table}[htbp]\centering
-\caption{V4D fully bonded responses. VM and equivalent elastic strain are TIM1 volume-average outputs.}
+\caption{Fully bonded mechanical sensitivity. Stress and equivalent elastic strain are TIM1 volume-average quantities.}
 \label{tab:v4d}
 \small
 \begin{tabular}{@{}lrrrr@{}}\toprule
 Bracket / design & BLT [mm] & Mean VM [MPa] & Mean strain [\%] & Warpage [$\mu$m]\\\midrule
-SOFT ($k=21$) & 0.25 & 0.007812 & 1.595 & 17.380\\
-SOFT ($k=30$) & 0.10 & 0.007622 & 1.586 & 16.212\\
-MID ($k=21$) & 0.25 & 0.011339 & 1.159 & 19.012\\
-MID ($k=30$) & 0.10 & 0.011866 & 1.228 & 17.155\\
-STIFF ($k=21$) & 0.25 & 0.010054 & 0.694 & 19.874\\
-STIFF ($k=30$) & 0.10 & 0.012794 & 0.883 & 17.587\\\bottomrule
+Low modulus ($k=21$) & 0.25 & 0.007812 & 1.595 & 17.380\\
+Low modulus ($k=30$) & 0.10 & 0.007622 & 1.586 & 16.212\\
+Reference ($k=21$) & 0.25 & 0.011339 & 1.159 & 19.012\\
+Reference ($k=30$) & 0.10 & 0.011866 & 1.228 & 17.155\\
+Higher modulus ($k=21$) & 0.25 & 0.010054 & 0.694 & 19.874\\
+Higher modulus ($k=30$) & 0.10 & 0.012794 & 0.883 & 17.587\\\bottomrule
 \end{tabular}
 \end{table}
 \FloatBarrier
-The paired scenario reduced lid warpage by 6.72--11.51\% across brackets but
-increased STIFF mean stress by 27.25\% and strain by 27.32\%.
-For B100 MID L2$\rightarrow$fine mesh, average stress changed 0.59\%,
-mean strain $-1.96$\%, and warpage $-0.038$\%, whereas \emph{local peak stress changed about 50.2\%}.
-Local peaks are therefore \textbf{not converged damage or failure metrics}.
-Critically, V4D changed $k$, BLT and the input temperature field simultaneously,
-motivating the matched V6A experiment.
+The paired scenario reduced lid warpage by 6.72--11.51\% across property combinations,
+while the higher-modulus case increased mean stress by 27.25\% and mean strain by 27.32\%.
+For the 100-$\mu$m reference-modulus model, intermediate-to-fine mesh refinement changed
+mean stress by +0.59\%, strain by $-1.96$\%, and warpage by $-0.038$\%.
+However, \emph{local peak stress changed by about 50.2\%}. Accordingly, pointwise peak
+stress is \textbf{not a converged failure metric}; only averaged mechanical trends and
+warpage are emphasized. Furthermore, this original pair varied conductivity,
+thickness \emph{and} the thermal loading simultaneously.
+It could not isolate the source of the mechanical difference.
+A common material model combined with all nine solved thermal conditions is needed
+for a more interpretable design comparison.
 
-\subsection{V6A: nine solved, matched thermomechanical cases}
-Each V4B Icepak field was transferred to a common MID carbon mechanics model:
-$E=1.0$\,MPa, CTE=180\,ppm/K, $\nu=0.49$; both original V4D MID cases
-acted as numerical reproduction gates.
-Thus the nine independent thermal fields are paired with nine mechanical analyses,
-not interpolated thermal temperatures.
+\subsection{Matched nine-case thermal-to-mechanical analysis}
+Every conductivity--thickness thermal configuration was coupled one-way to
+the same \emph{reference-modulus} carbon mechanical model:
+$E=1.0$\,MPa, CTE=180\,ppm/K, $\nu=0.49$.
+Two previously solved matching configurations served as numerical reproduction checks.
+The final comparison therefore contains nine solved thermal fields
+and nine corresponding mechanical runs, rather than interpolated temperatures.
+The thermal field is changed consistently with each design, while the nominal mechanical
+property inputs remain fixed.
+
+
+\subsection{What the matched design can and cannot isolate}
+Using the same effective modulus, Poisson ratio and CTE across the nine mechanical simulations
+removes the property-bracket confound in the initial two-design comparison. It does \emph{not}
+hold the thermal field constant: temperature is a physical result of changing conductivity and
+thickness and is intentionally transferred into the corresponding structural model.
+Consequently, the stress differences represent a \emph{total design response} under a
+specified one-way modeling protocol, rather than an isolated direct thickness effect at
+identical temperature. This distinction is important when drawing mechanism-level conclusions.
+Likewise, volume-averaged TIM stress is an engineering comparison metric, not a direct
+delamination criterion: local adhesion, cohesive strengths and cyclic constitutive behavior
+were not supplied \citep{subramanian2019,yenigun2026}.
 
 \begin{table}[htbp]\centering
-\caption{V6A matched MID DOE: modeled volume-average stress/strain and lid-top warpage.}
+\caption{Matched nine-case thermal-to-mechanical results with one common reference-modulus material model.}
 \label{tab:v6a}
 \small
 \begin{tabular}{@{}rrrrrr@{}}\toprule
@@ -366,7 +491,7 @@ tick label style={font=\scriptsize},label style={font=\scriptsize}]
 \end{axis}
 \end{tikzpicture}
 \end{minipage}
-\caption{Matched V6A response with fixed MID effective mechanics: the 250-$\mu$m sample minimizes
+\caption{Matched structural response with fixed reference-modulus properties: the 250-$\mu$m sample minimizes
 mean TIM stress at each sampled $k$, while thinner BLT favors temperature and modeled warpage.}
 \label{fig:v6a}
 \end{figure}
@@ -380,12 +505,45 @@ The 250-$\mu$m point gives the lowest mean stress and strain at \emph{each of th
 but this does not prove a continuous/global optimum.
 Holding BLT at 250\,$\mu$m while increasing $k$ from 15 to 30
 reduces peak temperature by 12.297\,\textdegree C and also lowers mean stress,
-mean strain and warpage in the \emph{assumed MID model}.
+mean strain and warpage in the \emph{assumed reference-modulus model}.
 The main observed mechanical compromise thus tracks BLT, not an inherent penalty from raising $k$.
 
-\section{Engineering decision: a two-candidate design window}
+\section{Integrated design comparison and recommendation}
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}
+\begin{axis}[width=0.78\linewidth,height=56mm,
+xlabel={Peak die temperature [\textdegree C]},ylabel={Mean TIM stress [MPa]},
+xmin=77,xmax=118,ymin=0.0103,ymax=0.0137,
+grid=major,grid style={draw=black!10},
+legend pos=north west,legend style={draw=none,font=\footnotesize},
+tick label style={font=\footnotesize},label style={font=\small},
+scaled y ticks=false]
+\addplot+[only marks,mark=square*,mark size=2.6pt,color=BrickRed]
+ coordinates {(85.490,0.012094)(100.323,0.012014)(114.389,0.013286)};
+\addlegendentry{$k=15$ W/(m\,K)}
+\addplot+[only marks,mark=triangle*,mark size=2.6pt,color=RoyalBlue]
+ coordinates {(82.625,0.011960)(93.344,0.011339)(103.544,0.012153)};
+\addlegendentry{$k=21$ W/(m\,K)}
+\addplot+[only marks,mark=*,mark size=2.6pt,color=ForestGreen]
+ coordinates {(80.455,0.011866)(88.026,0.010841)(95.194,0.011306)};
+\addlegendentry{$k=30$ W/(m\,K)}
+\draw[densely dashed,ForestGreen] (axis cs:80.455,0.011866) -- (axis cs:88.026,0.010841);
+\node[font=\scriptsize,anchor=south west,align=left] at (axis cs:80.455,0.011866)
+ {100\,$\mu$m};
+\node[font=\scriptsize,anchor=north west] at (axis cs:88.026,0.010841)
+ {250\,$\mu$m};
+\end{axis}
+\end{tikzpicture}
+\caption{Discrete modeled temperature--mean-stress trade-off.
+The two labeled $k=30$\,W/(m\,K) points demonstrate the lower-temperature/higher-mean-stress
+versus higher-temperature/lower-mean-stress choice. The dashed line is a guide, not a fitted response.}
+\label{fig:tradeoff}
+\end{figure}
+\FloatBarrier
+
 \begin{table}[htbp]\centering
-\caption{Conditional carbon candidates, combining \emph{separate} clean/retained thermal scenarios with fully bonded MID mechanics.}
+\caption{Conditional carbon candidates, combining \emph{separate} clean/retained thermal scenarios with fully bonded reference-modulus mechanics.}
 \label{tab:decision}
 \footnotesize
 \begin{tabularx}{\linewidth}{@{}p{37mm}rrrrY@{}}\toprule
@@ -397,27 +555,56 @@ Reference: $k=21$, BLT 250\,$\mu$m & 93.344 & 93.653 & 0.011339 & 19.012 & Liter
 \end{tabularx}
 \end{table}
 \FloatBarrier
-The 100-$\mu$m candidate targets lowest junction temperature and modeled warpage where
+
+This is a \emph{multi-objective} selection rather than a ranking by one scalar.
+A thermal-priority design favors the 100-$\mu$m case because both modeled peak temperature
+and warpage are lower. A mechanical-load-priority design favors 250\,$\mu$m because
+both averaged TIM stress and elastic strain are lower at fixed conductivity.
+At all three conductivities sampled, 400\,$\mu$m is unattractive relative to
+250\,$\mu$m in the combined simulated metrics: temperature, average stress/strain and warpage
+are all higher. This conclusion is restricted to the three tested thickness levels.
+The candidate comparison does not establish a yield, cost, lifetime or process-window optimum.
+A material vendor may impose a minimum viable compressed BLT or a contact-pressure
+requirement that changes which sampled point is physically achievable.
+
+The 100-$\mu$m candidate targets lowest peak die temperature and modeled warpage where
 compressed-pad feasibility and interface reliability can be demonstrated.
 The 250-$\mu$m candidate accepts a 7.571\,\textdegree C higher clean temperature and
 0.435\,$\mu$m more warpage at $k=30$ but minimizes sampled mean stress/strain.
 These outputs do not predict relative service lifetime; moreover, the 30/250 candidate has
-not been SOFT/STIFF bracket-tested. The central design finding is
+not been compared under the low- and higher-modulus sensitivity assumptions. The central design finding is
 \[
 \fbox{$\displaystyle\text{High } k \text{ helps broadly in this model; BLT creates the sampled thermal--mechanical trade-off.}$}
 \]
 
-\section{Limitations, validation route and conclusion}
+\section{Model limitations and next validation steps}
 The 25\,\textdegree C isothermal cold-plate top is not resolved coolant flow, and the 700-W
 pattern is not a measured commercial floorplan. Extreme topology cases are not measured
 contact maps and lack independent topology-specific mesh validation. The thermal contact
 penalty calibrated at 45\,W was not applied to later nominally ideal interfaces. Carbon
-mechanics are assumed isotropic equivalent SOFT/MID/STIFF brackets, not measured
+mechanics are assumed isotropic low-/reference-/higher-modulus property combinations, not measured
 temperature-dependent properties of a manufactured $k=30$ carbon pad.
 The quarter-package mechanics remain elastic, fully bonded and one-way/reduced-field;
 no pressure-dependent contact resistance, cohesive failure, cycling, creep, pump-out,
 plasticity in carbon, fatigue life or manufacturing yield was established.
 \emph{Peak local stress was not mesh-converged and is not used as a failure criterion.}
+
+
+\begin{table}[htbp]\centering
+\caption{Evidence maturity and the highest-value measurements required before product qualification.}
+\label{tab:maturity}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}p{31mm}p{53mm}Y@{}}
+\toprule
+Question & Supported in this study & Still required before claiming package reliability\\\midrule
+Thermal comparison & Solved steady-state cases; mesh/reference replication checks & Measured boundary conditions, assembled temperature maps and compressed BLT\\
+Contact retention & Fixed-area geometric sensitivity to idealized loss position & Observed spatial contact maps, pressure-dependent conductance, void/gas transport\\
+Thermomechanics & Matched one-way reduced-field solutions, mean stress/strain and warpage & Temperature-dependent measured TIM laws, interfaces, cycling and fracture criteria\\
+Design selection & Relative ranking among tested $k$--BLT combinations & Manufacturing capability, long-term adhesion and thermal-cycling statistics\\
+\bottomrule
+\end{tabularx}
+\end{table}
+\FloatBarrier
 
 The next qualification path is to measure compressed BLT and anisotropic conductivity;
 measure how contact resistance and adhesion vary with pressure and temperature;
@@ -426,6 +613,21 @@ validated coupled simulations and package experiments.
 Within its bounded assumptions, the study shows why TIM1 should be screened jointly
 on thermal conductivity, installed thickness, spatial interface integrity and mechanical
 accommodation---not on nominal $k$ or coverage percentage alone.
+
+
+\section{Conclusion}
+Three findings emerge from the same representative FCBGA model.
+First, intrinsic conductivity cannot be ranked in isolation from installed thickness and
+the quality of both contact surfaces. Second, the location of missing TIM1 contact
+can change thermal behavior drastically even at a fixed retained area; extreme
+blockage-model temperatures are \emph{not} reliability predictions.
+Third, a matched nine-point thermal-to-mechanical study identifies a sampled
+trade-off: the $k=30$\,W/(m\,K), 100-$\mu$m design has the best modeled
+peak temperature and warpage, whereas the 250-$\mu$m alternative has the
+smallest mean stress and strain. This result does not certify either design for service.
+The actionable contribution is a reproducible method for making TIM1 choices
+based on thermal and mechanical objectives \emph{together}, with explicit
+source traceability and defined verification gaps.
 
 {\small
 \bibliographystyle{unsrtnat}
