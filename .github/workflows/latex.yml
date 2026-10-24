@@ -1,0 +1,33 @@
+name: Compile EPTC LaTeX report
+
+on:
+  push:
+    paths:
+      - "main.tex"
+      - "references.bib"
+      - ".github/workflows/latex.yml"
+      - "data/**"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  latex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Compile report (pdfLaTeX/BibTeX)
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          latexmk_use_lualatex: false
+          args: -pdf -file-line-error -halt-on-error -interaction=nonstopmode
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: EPTC-2026-V6A-report
+          path: main.pdf
+          if-no-files-found: error
