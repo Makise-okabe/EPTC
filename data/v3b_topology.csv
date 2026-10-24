@@ -1,0 +1,4 @@
+scenario,retained_pct,tmax_C,reff_C_per_W,hottest_tile
+peripheral_ring,64.82,109.758,0.121083,DIE_1_0
+missing_edge_band,64.82,417.839,0.561198,DIE_0_1
+central_square_void,64.82,400.546,0.536495,DIE_2_2
