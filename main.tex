@@ -12,6 +12,7 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.17}
 \usepackage{caption}
+\usepackage{placeins} % Keep explanatory prose and its floats in reading order
 \usepackage{enumitem}
 \usepackage{natbib}
 \usepackage{titlesec}
@@ -72,6 +73,9 @@ on compressed thickness, thermal contact resistance, conformity, pressure and ag
 \citep{prasher2006,due2013,zhao2019}. Vertically oriented carbon-fiber TIMs can offer high through-plane
 conductivity with useful compliance \citep{li2023,yi2025}; metallic indium is an instructive alternative,
 with different bonding and constitutive-mechanics constraints \citep{wen2026}.
+The characterization of compliant TIM mechanical properties is itself challenging \citep{subramanian2019};
+recent studies emphasize coverage degradation and package-warpage-driven interface effects
+\citep{du2026,yenigun2026}.
 The question is how these properties and \emph{where} contact is retained jointly shape thermal and mechanical behavior.
 Our completed chain includes (i) baseline verification and TIM-family screening, (ii) coverage and topology sensitivity,
 (iii) a nine-case carbon thermal DOE, (iv) recovered nonideal-contact verification, and (v) a \emph{matched}
@@ -142,6 +146,7 @@ Carbon mechanics & $E=0.5/1/1.5$\,MPa; CTE $=250/180/100$\,ppm/K & Hypothetical 
 \bottomrule
 \end{tabularx}
 \end{table}
+\FloatBarrier
 
 \subsection{Solver coupling, metrics and verification}
 Steady-state thermal fields were obtained with Ansys AEDT/Icepak 2026 R1 under a fixed 25\,\textdegree C
@@ -250,6 +255,7 @@ label style={font=\small}]
 \caption{V4B discrete thermal DOE. Connecting lines aid comparison; the results do not establish continuous global optimality.}
 \label{fig:thermal}
 \end{figure}
+\FloatBarrier
 At $k=21$, 250$\rightarrow$100\,$\mu$m improves $\Tmax$ by 10.719\,\textdegree C.
 At BLT 250\,$\mu$m, $k=21\rightarrow30$ lowers $\Tmax$ by 5.318\,\textdegree C.
 The lowest \emph{sampled} clean temperature is 80.455\,\textdegree C,
@@ -298,6 +304,7 @@ STIFF ($k=21$) & 0.25 & 0.010054 & 0.694 & 19.874\\
 STIFF ($k=30$) & 0.10 & 0.012794 & 0.883 & 17.587\\\bottomrule
 \end{tabular}
 \end{table}
+\FloatBarrier
 The paired scenario reduced lid warpage by 6.72--11.51\% across brackets but
 increased STIFF mean stress by 27.25\% and strain by 27.32\%.
 For B100 MID L2$\rightarrow$fine mesh, average stress changed 0.59\%,
@@ -363,6 +370,7 @@ tick label style={font=\scriptsize},label style={font=\scriptsize}]
 mean TIM stress at each sampled $k$, while thinner BLT favors temperature and modeled warpage.}
 \label{fig:v6a}
 \end{figure}
+\FloatBarrier
 
 At fixed $k=30$\,W/(m\,K), 250$\rightarrow$100\,$\mu$m reduces peak temperature
 by 7.571\,\textdegree C and warpage by 2.47\%, but \emph{increases} mean stress
@@ -388,6 +396,7 @@ Carbon configuration & Clean $\Tmax$ & 88.22\% $\Tmax$ & Mean VM & Warpage & Tra
 Reference: $k=21$, BLT 250\,$\mu$m & 93.344 & 93.653 & 0.011339 & 19.012 & Literature-anchored $k$ baseline\\\bottomrule
 \end{tabularx}
 \end{table}
+\FloatBarrier
 The 100-$\mu$m candidate targets lowest junction temperature and modeled warpage where
 compressed-pad feasibility and interface reliability can be demonstrated.
 The 250-$\mu$m candidate accepts a 7.571\,\textdegree C higher clean temperature and
