@@ -102,7 +102,7 @@ def branded(sl,title,num,section=None,source=None):
     rust PCB-inspired top/bottom bands, EPTC mark, central white title."""
     put_rect(sl,0,0,W,TOP,fill=RUST)
     put_rect(sl,0,0,1.85,TOP,fill=RUST_DARK)
-    for j in range(10):
+    for j in range(8):
         ax=8.15+j*.57
         put_line(sl,ax,.13,ax+.29,.68,color=CORAL,width=.65)
         put_rect(sl,ax+.24,.62,.055,.055,fill="C87851")
