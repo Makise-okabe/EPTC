@@ -255,12 +255,21 @@ temps=[109.758,417.839,400.546]
 for i,typ in enumerate(styles):
     x=.66+i*4.23
     card(s,x,1.43,4.03,4.55,fill=PALE)
-    xx=x+.90;yy=1.87; step=.37
-    for row in range(6):
-        for col in range(6):
-            retain=(1<=row<=4 and 1<=col<=4) if typ=="ring" else (col<=3) if typ=="edge" else (not(1<=row<=4 and 1<=col<=4))
-            put_rect(s,xx+col*step,yy+row*step,step-.035,step-.035,
-                     fill=TEAL if retain else "E7DCD8")
+    # Area-preserving conceptual footprints: retain exactly 64.82% by geometry.
+    # These drawings are NOT images of measured TIM delamination.
+    xx=x+.90; yy=1.87; side=2.22
+    put_rect(s,xx,yy,side,side,fill="E7DCD8",line=LINE)
+    if typ=="ring":
+        retained_side=side*(0.6482**0.5)
+        margin=(side-retained_side)/2
+        put_rect(s,xx+margin,yy+margin,retained_side,retained_side,fill=TEAL)
+    elif typ=="edge":
+        put_rect(s,xx,yy,side*0.6482,side,fill=TEAL)
+    else:
+        put_rect(s,xx,yy,side,side,fill=TEAL)
+        void_side=side*(0.3518**0.5)
+        margin=(side-void_side)/2
+        put_rect(s,xx+margin,yy+margin,void_side,void_side,fill="E7DCD8")
     name=["Peripheral ring","One edge band","Central void"][i]
     put_text(s,x+.22,4.31,3.61,.41,name,17,NAVY,bold=True,align=PP_ALIGN.CENTER)
     put_text(s,x+.19,4.98,3.64,.52,"%.1f °C"%temps[i],29,GREEN if i==0 else RUST,
