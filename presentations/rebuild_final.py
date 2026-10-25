@@ -41,7 +41,11 @@ def citation(sl,msg):
                     ru.font.name="Aptos";ru.font.size=Pt(8.4)
                     ru.font.color.rgb=rgb(GREY)
             return True
-    return False
+    # Some original slides did not contain a dedicated citation text box.
+    # Insert a clean one in the reserved source strip rather than aborting.
+    put_rect(sl,.53,6.74,12.24,.29,fill=WHITE)
+    put_text(sl,.56,6.77,12.16,.23,msg,size=8.3,color=GREY)
+    return True
 
 # Full identifiers for previously implicit literature-derived claims.
 doi_wen="Wen et al., Int. J. Therm. Sci. 221 (2026), 110432. DOI: 10.1016/j.ijthermalsci.2025.110432."
