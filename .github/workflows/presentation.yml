@@ -25,6 +25,33 @@ jobs:
           python-version: '3.11'
       - name: Install editable PowerPoint library
         run: python -m pip install "python-pptx==1.0.2" "Pillow>=10.0"
+      - name: Dry-run exact-template importer (synthetic smoke fixture only)
+        run: |
+          python - <<'PY'
+          from tempfile import TemporaryDirectory
+          from pathlib import Path
+          from pptx import Presentation
+          from pptx.util import Inches
+          import sys
+          sys.path.insert(0, "presentations")
+          import apply_organiser_template as m
+          with TemporaryDirectory() as d:
+              t=Presentation()
+              t.slide_width=Inches(13.333)
+              t.slide_height=Inches(7.5)
+              slide=t.slides.add_slide(t.slide_layouts[6])
+              title=slide.shapes.add_textbox(Inches(2),Inches(.13),Inches(10),Inches(.56))
+              title.text="Title"
+              footer=slide.shapes.add_textbox(Inches(12.6),Inches(7.15),Inches(.3),Inches(.2))
+              footer.text="1"
+              p=Path(d)/"synthetic.pptx"
+              t.save(p)
+              m.TEMPLATE=p
+              m.OUTPUT=Path(d)/"preview.pptx"
+              m.main()
+              assert m.OUTPUT.exists()
+              print("Smoke import passed; test graphics were not published")
+          PY
       - name: Build slides with the untouched organiser header/footer
         id: build
         shell: bash
