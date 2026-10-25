@@ -72,7 +72,9 @@ def pill(sl,x,y,text,color=TEAL,w=None,h=0.37,small=12):
     return w
 
 def label(sl,x,y,text,color=TEAL,size=11):
-    put_text(sl,x,y,9,.24,text.upper(),size=size,color=color,bold=True)
+    # Keep short section labels inside the slide, including labels in right-side cards.
+    usable=max(.35,min(9.0,W-x-.19))
+    put_text(sl,x,y,usable,.24,text.upper(),size=size,color=color,bold=True)
 
 def card(sl,x,y,w,h,title=None,fill=WHITE,border=LINE,title_color=NAVY):
     put_rect(sl,x,y,w,h,fill=fill,line=border,radius=True,width=.85)
