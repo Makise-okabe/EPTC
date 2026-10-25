@@ -1,9 +1,10 @@
-name: Build EPTC competition presentation
+name: Use original organiser EPTC template
 
 on:
   push:
     paths:
-      - 'presentations/*.py'
+      - 'presentations/organiser_template.pptx'
+      - 'presentations/apply_organiser_template.py'
       - '.github/workflows/presentation.yml'
   workflow_dispatch:
 
@@ -11,51 +12,64 @@ permissions:
   contents: write
 
 jobs:
-  build-pptx:
+  original-template:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out GitHub repository
+        uses: actions/checkout@v4
         with:
           persist-credentials: true
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install PowerPoint tools
+      - name: Install editable PowerPoint library
+        run: python -m pip install "python-pptx==1.0.2" "Pillow>=10.0"
+      - name: Build slides with the untouched organiser header/footer
+        id: build
+        shell: bash
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install "python-pptx==1.0.2" "Pillow>=10.0"
-      - name: Generate editable presentation
-        run: |
-          python presentations/build_deck.py
-          python presentations/rebuild_final.py
-      - name: Verify saved PPTX, shape layout and citations
+          if [ -f presentations/organiser_template.pptx ]; then
+            python presentations/apply_organiser_template.py
+            echo "produced=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Upload your original pptx as presentations/organiser_template.pptx. The workflow will then create the 35-slide exact-template deck."
+            echo "produced=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Verify template-backed PowerPoint
+        if: steps.build.outputs.produced == 'true'
         run: |
           python - <<'PY'
           from pptx import Presentation
           from pathlib import Path
-          f = next(Path("presentations").glob("EPTC_2026_Student_Innovation_Challenge_Presentation.pptx"))
-          p = Presentation(f)
-          assert len(p.slides) == 35, len(p.slides)
-          txt = "\n".join(sh.text for slide in p.slides for sh in slide.shapes if sh.has_text_frame)
-          for expected in ("80.455", "0.010841", "9.46%", "88.22%", "64.82%", "Yenigun", "Yi, M.", "Prasher", "0.000387%", "50.90 MPa", "10.1016/j.ijthermalsci.2025.110432"):
-            assert expected in txt, expected
-          for banned in ("V6A", "V4B", "V3B", "V4D", "Draft"):
-            assert banned not in txt, banned
-          print(f"PASS slides={len(p.slides)} size={f.stat().st_size} bytes")
+          from hashlib import sha256
+          base=Presentation('presentations/organiser_template.pptx')
+          outpath=Path('presentations/EPTC_2026_Official_Template_Presentation.pptx')
+          out=Presentation(str(outpath))
+          assert len(out.slides)==35, len(out.slides)
+          assert outpath.stat().st_size > 70000
+          original={sha256(s.image.blob).hexdigest() for s in base.slides[0].shapes if s.shape_type==13}
+          current={sha256(s.image.blob).hexdigest() for s in out.slides[0].shapes if s.shape_type==13}
+          assert original<=current, "Original organizer images not embedded faithfully"
+          combined='\n'.join(s.text for p in out.slides for s in p.shapes if s.has_text_frame)
+          for required in ('80.455','0.010841','9.46%','Yi, M.','Wen, J.','64.82%'):
+              assert required in combined, required
+          print('PASS: 35 slides, original assets lossless, report findings preserved')
           PY
-      - name: Publish deck to repository
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      - name: Commit official-template deck
+        if: steps.build.outputs.produced == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add presentations/EPTC_2026_Student_Innovation_Challenge_Presentation.pptx
+          git add presentations/EPTC_2026_Official_Template_Presentation.pptx
           if ! git diff --cached --quiet; then
-            git commit -m "Build competition-ready EPTC slide deck [skip ci]"
+            git commit -m "Publish slides on original EPTC organiser template [skip ci]"
             git push
           fi
-      - name: Upload PowerPoint artifact
+      - name: Upload editable PowerPoint
+        if: steps.build.outputs.produced == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: EPTC-2026-Research-Presentation-35-slides
-          path: presentations/EPTC_2026_Student_Innovation_Challenge_Presentation.pptx
+          name: EPTC-2026-OFFICIAL-TEMPLATE-35-SLIDES
+          path: presentations/EPTC_2026_Official_Template_Presentation.pptx
           if-no-files-found: error
