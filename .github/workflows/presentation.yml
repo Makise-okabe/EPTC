@@ -25,7 +25,9 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install "python-pptx==1.0.2" "Pillow>=10.0"
       - name: Generate editable presentation
-        run: python presentations/build_deck.py
+        run: |
+          python presentations/build_deck.py
+          python presentations/rebuild_final.py
       - name: Verify saved PPTX, shape layout and citations
         run: |
           python - <<'PY'
@@ -33,9 +35,9 @@ jobs:
           from pathlib import Path
           f = next(Path("presentations").glob("EPTC_2026_Student_Innovation_Challenge_Presentation.pptx"))
           p = Presentation(f)
-          assert len(p.slides) == 30, len(p.slides)
+          assert len(p.slides) == 35, len(p.slides)
           txt = "\n".join(sh.text for slide in p.slides for sh in slide.shapes if sh.has_text_frame)
-          for expected in ("80.455", "0.010841", "9.46%", "88.22%", "64.82%", "Yenigun", "Yi, M.", "Prasher"):
+          for expected in ("80.455", "0.010841", "9.46%", "88.22%", "64.82%", "Yenigun", "Yi, M.", "Prasher", "0.000387%", "50.90 MPa", "10.1016/j.ijthermalsci.2025.110432"):
             assert expected in txt, expected
           for banned in ("V6A", "V4B", "V3B", "V4D", "Draft"):
             assert banned not in txt, banned
@@ -54,6 +56,6 @@ jobs:
       - name: Upload PowerPoint artifact
         uses: actions/upload-artifact@v4
         with:
-          name: EPTC-2026-Competition-PowerPoint
+          name: EPTC-2026-Research-Presentation-35-slides
           path: presentations/EPTC_2026_Student_Innovation_Challenge_Presentation.pptx
           if-no-files-found: error
