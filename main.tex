@@ -32,6 +32,8 @@
 \titleformat{\subsection}{\normalsize\bfseries\color{ink}}{\thesubsection}{0.55em}{}
 \titlespacing*{\section}{0pt}{9pt}{3pt}
 \titlespacing*{\subsection}{0pt}{6pt}{2pt}
+\titleformat{\subsubsection}{\small\bfseries\color{ink}}{\thesubsubsection}{0.55em}{}
+\titlespacing*{\subsubsection}{0pt}{5pt}{2pt}
 \captionsetup{font=small,labelfont=bf,skip=3pt}
 \pagestyle{fancy}
 \fancyhf{}
@@ -47,27 +49,63 @@
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 
 \begin{document}
-\begin{center}
-{\LARGE\bfseries\color{ink} Interface-Aware Thermomechanical Co-Design of TIM1}\\[2pt]
-{\large\bfseries for a Representative 700-W AI Accelerator FCBGA Package}\\[5pt]
-{\small EPTC 2026 Student Innovation Challenge --- Final Technical Report}\\[3pt]
-{\small Fang Tianchi \quad Ke Tangxin \quad Du Yanzhang \quad Duan Yihe}\\[3pt]
-{\footnotesize\itshape Simulation-based engineering study; not product qualification}
-\end{center}
-\vspace{-1mm}
-\noindent\colorbox{pale}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\small
-\textbf{Abstract.} A representative 700-W lidded flip-chip ball-grid-array (FCBGA) package is used to co-screen
-thermal-interface-material 1 (TIM1) conductivity, bond-line thickness (BLT), retained contact area, and simplified
-package mechanics. The grease, carbon-fiber, and indium ideal-interface references yielded peak die temperatures
-of 102.534, 93.344, and 81.883\,\textdegree C. Nine carbon conductivity--BLT thermal solutions and a matched nine-case
-mechanical study expose a conditional trade-off: at $\kperp=30$\,W/(m\,K), reducing BLT from 0.25 to 0.10\,mm
-lowers peak temperature by 7.571\,\textdegree C and modeled lid warpage by 2.47\%, but increases mean TIM stress
-by 9.46\% and mean elastic strain by 10.86\%. Idealized contact-loss patterns with identical 64.82\% area
-also show widely different thermal outcomes. We therefore identify two \emph{sampled} carbon design candidates,
-not a universal optimum or a qualified commercial material.}}\\[2pt]
-{\footnotesize\textbf{Keywords:} FCBGA; thermal interface material; carbon-fiber TIM; BLT; contact coverage; warpage; multiphysics DOE.}
+\begin{titlepage}
+\thispagestyle{empty}
+\vspace*{14mm}
+{\small\bfseries\color{midblue} EPTC 2026 STUDENT INNOVATION CHALLENGE}\par
+\vspace{4mm}
+{\color{midblue}\rule{\linewidth}{1.4pt}}\par
+\vspace{14mm}
+{\Huge\bfseries\color{ink} Interface-Aware\\[3mm] Thermomechanical\\[3mm] Co-Design of TIM1}\par
+\vspace{7mm}
+{\Large for a Representative 700-W AI Accelerator FCBGA Package}\par
+\vspace{12mm}
+{\color{steel}\rule{0.28\linewidth}{0.7pt}}\par
+\vspace{9mm}
+{\large\bfseries Final Technical Report}\par
+{\normalsize\color{steel} Thermal Interface Material Optimization for Advanced Electronics Packaging and Reliability}\par
+\vspace{17mm}
+\begin{tabularx}{\linewidth}{@{}p{35mm}Y@{}}
+\textbf{Institution} & National University of Singapore (NUS)\\[3mm]
+\textbf{Team members} & Fang Tianchi, Ke Tangxin, Du Yanzhang and Duan Yihe\\[3mm]
+\textbf{Registered team} & \textcolor{BrickRed}{\textbf{[INSERT REGISTERED TEAM NAME]}}\\[3mm]
+\textbf{EPTC Team ID} & \textcolor{BrickRed}{\textbf{[INSERT TEAM ID]}}\\
+\end{tabularx}
+\vfill
+\noindent\colorbox{pale}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{
+\small\textbf{Study scope.} Analytical checks, steady-state Icepak thermal screening,
+contact-retention sensitivity, and matched one-way MAPDL structural analysis.
+The paper compares simulated design alternatives; it does not claim measured hardware
+performance, fatigue life or industrial qualification.}}
+\vspace{6mm}
+{\small\color{steel} Singapore \hfill 26 October 2026}
+\end{titlepage}
+\setcounter{page}{2}
 
-\section{Motivation and contribution}
+\section*{Abstract}
+\noindent\colorbox{pale}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\small
+A representative 700-W lidded flip-chip ball-grid-array (FCBGA) package was used
+to investigate thermal-interface-material 1 (TIM1) conductivity, bond-line thickness
+(BLT), retained contact area and simplified package mechanics. The approach combines
+analytical resistance checks, numerical replication, a three-material thermal screen,
+idealized contact-loss scenarios, nine carbon conductivity--BLT thermal solutions
+and nine matched one-way thermomechanical analyses. Under ideal thermal contact,
+grease, carbon-fiber and indium reference cases yielded peak die temperatures of
+102.534, 93.344 and 81.883\,\textdegree C, respectively. At fixed carbon
+$k_\perp=30$\,W/(m\,K), reducing BLT from 0.25 to 0.10\,mm lowered
+peak temperature by 7.571\,\textdegree C and modeled lid warpage by 2.47\%,
+but increased volume-averaged TIM stress by 9.46\% and mean elastic strain
+by 10.86\%. Equal 64.82\% retained-contact fractions yielded highly different
+thermal outcomes when missing-contact topology was varied. We recommend two
+\emph{sampled} candidates: a 100-$\mu$m thermal-priority configuration
+and a 250-$\mu$m lower-stress configuration, both at $k_\perp=30$\,W/(m\,K).
+The results define a bounded engineering trade-off, not a universal optimum,
+validated failure threshold or qualified manufactured material.}}\par
+\vspace{2mm}
+{\footnotesize\textbf{Keywords:} FCBGA; TIM1; carbon-fiber thermal pad; bond-line thickness;
+interface coverage; warpage; thermomechanical FEA.}
+
+\section{Problem Statement}
 The heat-removal path of a high-power lidded package depends not only on bulk TIM conductivity but also
 on compressed thickness, thermal contact resistance, conformity, pressure and aging
 \citep{prasher2006,due2013,zhao2019}. Vertically oriented carbon-fiber TIMs can offer high through-plane
@@ -92,7 +130,7 @@ Similarly, reduced global lid warpage does not guarantee lower local interfacial
 \citep{subramanian2019,yenigun2026}.
 
 
-\subsection{Decision variables and what constitutes a credible comparison}
+\subsection{Design objectives and evaluation criteria}
 A thermal-only screening exercise favors lower modeled peak die temperature. A package-level choice must
 add mechanically relevant measures, here the volume-averaged TIM1 von Mises stress and equivalent elastic strain,
 alongside lid-top warpage. These metrics are kept separate: a lower warpage result does not imply a lower
@@ -103,7 +141,7 @@ so an apparent conductivity effect is not confounded by switching modulus assump
 This design-of-experiments approach is supported by the broader TIM literature but the numerical cases
 and their outputs belong to this study, not to the cited authors \citep{prasher2006,subramanian2019}.
 
-\section{Package representation and numerical methodology}
+\section{Methodology}
 \subsection{Geometry, hotspot distribution and source traceability}
 Figure~\ref{fig:model} illustrates the modeled heat path and prescribed 4$\times$4 hotspot distribution.
 This is a \emph{representative test vehicle}, not an H100 floorplan or measured proprietary GPU.
@@ -218,7 +256,7 @@ A one-dimensional resistance term also does not capture lateral spreading throug
 the die and lid. Therefore, the modeled $\Reff$ is used for comparison of \emph{whole-package}
 thermal responses rather than being identified with TIM1 bulk or interfacial resistance.
 
-\section{Thermal interface material selection and contact loss}
+\section{Results and Analysis}
 \subsection{Grease, carbon-fiber and indium reference comparison}
 \begin{table}[htbp]\centering
 \caption{Material-family references at 700\,W with ideally retained TIM1 area; BLTs also differ.}
@@ -311,8 +349,8 @@ Published reports of packaging-induced area loss \citep{yi2025} and coupled warp
 \citep{du2026,yenigun2026} motivate measuring where contact is retained, not just how much.
 
 
-\section{Conductivity and bond-line thickness design study}
-\subsection{Nine-case full-contact thermal design of experiments}
+\subsection{Thermal optimization across conductivity and bond-line thickness}
+\subsubsection{Nine-case full-contact thermal design of experiments}
 The factorial DOE varies $\kperp=\{15,21,30\}$\,W/(m\,K)
 and $\BLT=\{0.10,0.25,0.40\}$\,mm while fixing the remaining study conditions.
 \begin{table}[htbp]\centering
@@ -353,7 +391,7 @@ $\Reff=0.079221$\,\textdegree C/W, at $k=30$ and 100\,$\mu$m;
 this is a targeted, not experimentally qualified, material and assembly state.
 
 
-\subsection{Interpreting the conductivity--thickness trend}
+\subsubsection{Interpreting the conductivity--thickness trend}
 The DOE distinguishes two decisions that are often conflated. At a \emph{fixed} conductivity,
 a reduction in installed BLT shortens the bulk conduction path. At a \emph{fixed} thickness,
 increasing through-plane conductivity has a similar direction of thermal benefit, but not
@@ -366,7 +404,7 @@ high conductivity and tunable compliance as \emph{material concepts}, but does n
 validate the modulus, compressed thickness or adhesion assumed here
 \citep{li2023,yi2025,subramanian2019}.
 
-\subsection{Independent confirmation under partial contact retention}
+\subsubsection{Independent confirmation under partial contact retention}
 \begin{table}[htbp]\centering
 \caption{Four independently checked thermal configurations at full or 88.22\% retained TIM1 contact area.}
 \label{tab:v4c}
@@ -385,8 +423,8 @@ The last case has $\Reff=0.0794998$\,\textdegree C/W.
 Relative to the full-coverage $k=21$, 250-$\mu$m reference it is 12.694\,\textdegree C cooler;
 because $k$, BLT and contact conditions differ, this is not a single-variable causal effect.
 
-\section{Thermomechanical sensitivity and matched comparison}
-\subsection{Effective material-property sensitivity and mesh verification}
+\subsection{Thermomechanical sensitivity and matched comparison}
+\subsubsection{Effective material-property sensitivity and mesh verification}
 An initial structural sensitivity comparison paired two \emph{different thermal} designs:
 $k=21$\,W/(m\,K), BLT 250\,$\mu$m and $k=30$\,W/(m\,K), BLT 100\,$\mu$m.
 Three hypothetical effective-property combinations were used: low modulus ($E=0.5$\,MPa,
@@ -422,7 +460,7 @@ It could not isolate the source of the mechanical difference.
 A common material model combined with all nine solved thermal conditions is needed
 for a more interpretable design comparison.
 
-\subsection{Matched nine-case thermal-to-mechanical analysis}
+\subsubsection{Matched nine-case thermal-to-mechanical analysis}
 Every conductivity--thickness thermal configuration was coupled one-way to
 the same \emph{reference-modulus} carbon mechanical model:
 $E=1.0$\,MPa, CTE=180\,ppm/K, $\nu=0.49$.
@@ -433,7 +471,7 @@ The thermal field is changed consistently with each design, while the nominal me
 property inputs remain fixed.
 
 
-\subsection{What the matched design can and cannot isolate}
+\subsubsection{What the matched design can and cannot isolate}
 Using the same effective modulus, Poisson ratio and CTE across the nine mechanical simulations
 removes the property-bracket confound in the initial two-design comparison. It does \emph{not}
 hold the thermal field constant: temperature is a physical result of changing conductivity and
@@ -508,7 +546,7 @@ reduces peak temperature by 12.297\,\textdegree C and also lowers mean stress,
 mean strain and warpage in the \emph{assumed reference-modulus model}.
 The main observed mechanical compromise thus tracks BLT, not an inherent penalty from raising $k$.
 
-\section{Integrated design comparison and recommendation}
+\section{Discussion and Optimization}
 
 \begin{figure}[htbp]\centering
 \begin{tikzpicture}
@@ -577,7 +615,7 @@ not been compared under the low- and higher-modulus sensitivity assumptions. The
 \fbox{$\displaystyle\text{High } k \text{ helps broadly in this model; BLT creates the sampled thermal--mechanical trade-off.}$}
 \]
 
-\section{Model limitations and next validation steps}
+\subsection{Model limitations and industrial qualification}
 The 25\,\textdegree C isothermal cold-plate top is not resolved coolant flow, and the 700-W
 pattern is not a measured commercial floorplan. Extreme topology cases are not measured
 contact maps and lack independent topology-specific mesh validation. The thermal contact
@@ -615,7 +653,7 @@ on thermal conductivity, installed thickness, spatial interface integrity and me
 accommodation---not on nominal $k$ or coverage percentage alone.
 
 
-\section{Conclusion}
+\section{Conclusion and Recommendations}
 Three findings emerge from the same representative FCBGA model.
 First, intrinsic conductivity cannot be ranked in isolation from installed thickness and
 the quality of both contact surfaces. Second, the location of missing TIM1 contact
