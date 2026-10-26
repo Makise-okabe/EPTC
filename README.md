@@ -15,11 +15,11 @@ The report figures (package cross-section, prescribed 700 W map, thermal DOE, ma
 
 - `main.tex` — complete report, figures and tables
 - `references.bib` — bibliographic entries cited in the report
-- `data/v1_material_screen.csv` — locked material reference material thermal references
+- `data/v1_material_screen.csv` — material-family thermal screening data
 - `data/v3b_topology.csv` — modeled topology sensitivity
 - `data/v4c_recovered_4case.csv` — recovered retained-contact shortlist (do not substitute the failed/incomplete export)
-- `data/v4d_effective_brackets.csv` — mechanical sensitivity mechanical bracket comparisons
-- `data/v6a_9point_matched.csv` — matched nine-case matched nine-case DOE
+- `data/v4d_effective_brackets.csv` — mechanical-property sensitivity comparisons
+- `data/v6a_9point_matched.csv` — matched nine-case thermal–mechanical DOE
 - `.github/workflows/latex.yml` — automated PDF compilation / downloadable build artifact
 
 ### Evidence boundaries
@@ -31,5 +31,14 @@ These are **curated report tables**, not original AEDT/MAPDL solver files. Numer
 **Evidence freeze:** 23 October 2026
 
 ## Update policy
+
+The revised report follows the organiser's required sequence: **Title Page & Team Info → Abstract → Problem Statement → Methodology → Results & Analysis → Discussion & Optimization → Conclusion & Recommendations → References**. The compiled report is **9 A4 pages**, including references, as of 26 October 2026.
+
+### Pre-submission checks
+
+- **Replace `[INSERT REGISTERED TEAM NAME]` and `[INSERT TEAM ID]` on the cover page with the team's actual registration details. Do not submit with these placeholders.**
+- Check whether the submission portal expects an actual solver-generated Icepak temperature/hotspot contour. The report currently contains a clearly labeled prescribed 4×4 *heat-source map*, not a claimed solved temperature-field contour. Do not mislabel it.
+- Compile `main.tex` and verify no PDF issues after replacing the placeholders.
+- Keep the raw simulation exports available upon request; the `data/` folder contains curated comparison tables.
 
 The current report source lives on `main`. Future changes should edit these same files and preserve the frozen source data, with corrections clearly recorded in Git history. Re-run the LaTeX build after changes and verify the compiled PDF page count is below ten pages before competition submission.
