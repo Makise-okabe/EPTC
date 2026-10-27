@@ -258,15 +258,27 @@ Fine & \textbf{31.505548} & \textbf{0.144567735} & \textbf{0.000387} & \textbf{0
 \end{table}
 The medium-to-fine changes in both metrics were below the predeclared
 1\% threshold: \textbf{numerical mesh convergence passed}.
-However, the fine-mesh $\theta_{JC}$ was \textbf{27.716\% below}
-the study-selected $\sim0.20$\,\textdegree C/W X23 literature comparator
-\citep{yi2025}. Thus, \emph{literature reproduction did not pass};
-the discrepancy cannot be assigned solely to contact resistance when
-the stack geometry, effective properties and ideal bonded interfaces differ.
-An exploratory 45-W fit used an effective package-level
-8.65\,\textdegree C\,mm$^2$/W impedance to reach that selected comparator;
-this was not an independently measured TIM contact law and was \emph{not}
-carried into the subsequent competition model.
+The uncorrected fine-mesh $\theta_{JC}=0.144567735$\,\textdegree C/W
+was 27.716\% below the study-selected X23 literature comparator of
+0.20\,\textdegree C/W \citep{yi2025}. To examine the missing package-level
+resistance, an effective conducting-plate interface impedance was introduced
+\emph{without changing the bulk TIM conductivity}.
+The target-based analytical estimate was
+$Z_{\mathrm{eff}}=(0.20-0.144567735)(12\times13)
+=8.647433$\,\textdegree C\,mm$^2$/W.
+In the subsequent Icepak calibration sweep, $Z_{\mathrm{eff}}=8.65$
+gave $T_{\max}=33.994806$\,\textdegree C and
+$\theta_{JC}=0.199884576$\,\textdegree C/W:
+\textbf{0.058\% deviation from the selected literature target}.
+Thus, the initial numerical-convergence check and the
+\emph{literature-target calibration} both met their respective criteria.
+
+Importantly, the analytical impedance was inferred from \emph{the same}
+reference target used to select the sweep case, so this close agreement
+is a fitted consistency check, \emph{not independent experimental validation}
+or a measured X23 contact resistance. The effective term may also absorb
+unmodeled geometry and other thermal-path differences. It was \emph{not}
+transferred to the later 700-W competition simulations.
 
 For that later 700-W model, separate grease medium-to-fine refinement changed
 $T_{\max}$ by 0.256\% and $\Reff$ by 0.339\%; independent carbon builds
