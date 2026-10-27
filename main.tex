@@ -223,19 +223,58 @@ For area $A=(28.5\,\mathrm{mm})^2$ we distinguish the bulk TIM metric and a mode
 $\Reff$ is a \emph{peak-die-to-fixed-boundary} metric, not measured JEDEC $\theta_{JC}$
 and not an intrinsic material property.
 
-Mesh refinement of the grease reference changed peak temperature by 0.256\% and $\Reff$ by 0.339\%;
-an independently rebuilt carbon reference agreed within 0.004\,\textdegree C.
-The $k=21$\,W/(m\,K), 0.25-mm control in the conductivity--BLT study
-reproduced the reference to within 0.000031\,\textdegree C.
-These are numerical consistency tests, not experimental calibration.
+\subsection{Pre-optimization analytical and mesh verification}
+Before screening TIM designs, a separate simplified 45-W FCBGA was used to
+ask two questions: does the numerical heat path agree with first-principles
+conduction, and is its output insensitive to mesh refinement? It used a
+uniformly heated $12\times13$\,mm silicon die, a 90-$\mu$m nominal
+X23-type TIM ($k=5$\,W/(m\,K)), a fixed 25\,\textdegree C case boundary,
+and provisional dimensions/effective materials; it was \emph{not}
+the later 700-W AI package.
 
-An \emph{independent 45-W thermal-resistance diagnostic} fitted a study-selected
-0.200\,\textdegree C/W package target from a modeled 0.14457\,\textdegree C/W
-using an effective 8.65\,\textdegree C\,mm$^2$/W package-level penalty.
-The fitted term was neither measured intrinsic TIM contact resistance nor applied
-to the later 700-W simulations. The full-contact results are therefore best interpreted
-as ideal-interface comparisons, not as unconditional predictions of actual assembled packages. Contact
-resistance depends on roughness, pressure and interface temperature \citep{zhao2019}.
+The independent through-plane bulk estimate was
+\begin{equation}
+R_{\mathrm{TIM,bulk}}=\frac{90\times10^{-6}}
+{5(12\times13)\times10^{-6}}=0.115385\ \textdegree C/W,\qquad
+\Delta T_{\mathrm{TIM,bulk}}=45R_{\mathrm{TIM,bulk}}=5.1923\ \textdegree C .
+\label{eq:initial_validation}
+\end{equation}
+This checked the physical order of magnitude, not equality with a
+3D package result that also includes die/lid spreading.
+
+\begin{table}[htbp]\centering
+\caption{Initial 45-W Icepak mesh verification; changes are relative to the preceding mesh.
+All values are from the completed original solver report.}
+\label{tab:initial_validation}
+\small
+\begin{tabular}{@{}lrrrr@{}}\toprule
+Mesh & $T_{\max}$ [\textdegree C] & $\theta_{JC}$ [\textdegree C/W] &
+$\Delta T_{\max}$ [\%] & $\Delta\theta_{JC}$ [\%]\\\midrule
+Coarse & 31.503503 & 0.144522298 & -- & --\\
+Medium & 31.505426 & 0.144565023 & 0.006102 & 0.029554\\
+Fine & \textbf{31.505548} & \textbf{0.144567735} & \textbf{0.000387} & \textbf{0.001876}\\
+\bottomrule
+\end{tabular}
+\end{table}
+The medium-to-fine changes in both metrics were below the predeclared
+1\% threshold: \textbf{numerical mesh convergence passed}.
+However, the fine-mesh $\theta_{JC}$ was \textbf{27.716\% below}
+the study-selected $\sim0.20$\,\textdegree C/W X23 literature comparator
+\citep{yi2025}. Thus, \emph{literature reproduction did not pass};
+the discrepancy cannot be assigned solely to contact resistance when
+the stack geometry, effective properties and ideal bonded interfaces differ.
+An exploratory 45-W fit used an effective package-level
+8.65\,\textdegree C\,mm$^2$/W impedance to reach that selected comparator;
+this was not an independently measured TIM contact law and was \emph{not}
+carried into the subsequent competition model.
+
+For that later 700-W model, separate grease medium-to-fine refinement changed
+$T_{\max}$ by 0.256\% and $\Reff$ by 0.339\%; independent carbon builds
+reproduced the reference within 0.004\,\textdegree C, and the
+$k=21$\,W/(m\,K), 0.25-mm control agreed within
+0.000031\,\textdegree C. These are additional numerical consistency checks,
+not experimental qualification. Real contact resistance depends on
+roughness, pressure and temperature \citep{zhao2019}.
 
 
 \subsection{Physical basis of the thermal comparison}
